@@ -1,58 +1,69 @@
 
-angular.module('starter.controllers',[])
+angular.module('starter.controllers',['ionic','ionic-toast'])
 
-.controller("TarefaCtrl", function($scope){
+.controller("TarefaCtrl", ['$scope','ionicToast', function($scope, ionicToast){
 	initialize();
 	getLocalStorage();
 	$scope.adicionar = function(){
 		if($scope.nova.nome){
-			var tarefa;
-			//if($scope.tarefas.length > 0){
-				//for(var i=0;i<$scope.tarefas.length;i++){
-					//if($scope.nova.nome != $scope.tarefas[i].nome){
-					//	tarefa = {
-					//		nome: $scope.nova.nome,
-					//		feito: false
-					//	};
-					//}
-			//	}
-			//}else{
-				tarefa = {
+			var existe = false;
+			if($scope.tarefas.length > 0){
+				for(var i=0;i<$scope.tarefas.length;i++){
+					if($scope.nova.nome == $scope.tarefas[i].nome){
+						existe = true;
+					}
+				}
+			}
+			if(!existe){
+				$scope.tarefas.push({
 					nome: $scope.nova.nome,
 					feito: false
-				};
-			//}
-			if(tarefa != null){
-				$scope.tarefas.push(tarefa);
+				});
 				localStorage.setItem("tarefas", JSON.stringify($scope.tarefas));
 				totais();
+				$scope.nova = {nome: ''};
+				showMessage('Produto cadastrado com sucesso!','top',false);
+			}else{
+				showMessage('O Produto já existe na lista!','top',false);
 			}
+		}else{
+			showMessage('Informe um nome!','top',false);
 		}
-		$scope.nova = {nome: ''};
 	};
 
-	$scope.limparNaoFeitas = function(){
-		var incompletas = [];
-		for(var i=0;i<$scope.tarefas.length;i++){
-			if($scope.tarefas[i].feito){
-				incompletas.push($scope.tarefas[i]);
-			}
-		}
-		localStorage.setItem("tarefas", JSON.stringify(incompletas));
-		$scope.tarefas = JSON.parse(localStorage.getItem('tarefas'));
-		totais();
-	};
-
-	$scope.limparFeitas = function(){
-		var completas = [];
+	$scope.limparMarcados = function(){
+		var naoMarcados = [];
 		for(var i=0;i<$scope.tarefas.length;i++){
 			if(!$scope.tarefas[i].feito){
-				completas.push($scope.tarefas[i]);
+				naoMarcados.push($scope.tarefas[i]);
 			}
 		}
-		localStorage.setItem("tarefas", JSON.stringify(completas));
-		$scope.tarefas = JSON.parse(localStorage.getItem('tarefas'));
-		totais();
+		if($scope.tarefas.length != naoMarcados.length){
+			localStorage.setItem("tarefas", JSON.stringify(naoMarcados));
+			$scope.tarefas = JSON.parse(localStorage.getItem('tarefas'));
+			showMessage('Produtos marcados excluídos com sucesso!','bottom',false);
+			totais();			
+		}else{
+			showMessage('Não existe produtos não marcados!','bottom',false);
+		}
+		
+	};
+
+	$scope.limparNaoMarcados = function(){
+		var marcados = [];
+		for(var i=0;i<$scope.tarefas.length;i++){
+			if($scope.tarefas[i].feito){
+				marcados.push($scope.tarefas[i]);
+			}
+		}
+		if($scope.tarefas.length != marcados.length){
+			localStorage.setItem("tarefas", JSON.stringify(marcados));
+			$scope.tarefas = JSON.parse(localStorage.getItem('tarefas'));
+			showMessage('Produtos Não marcados excluídos com sucesso!','bottom',false);	
+			totais();		
+		}else{
+			showMessage('Não existe produtos marcados!','bottom',false);
+		}
 	};
 
 	$scope.totais = function(){
@@ -60,34 +71,34 @@ angular.module('starter.controllers',[])
 	}
 
 	function totais(){
-		var totalCompletas = 0;
-		var totalIncompletas = 0;
+		var totalMarcados = 0;
+		var totalNaoMarcados = 0;
 		var tarefas = [];
 		
 		for(var i=0;i<$scope.tarefas.length;i++){
 			if(!$scope.tarefas[i].feito){
-				totalIncompletas++;
-				tarefas.push($scope.tarefas[i]);
-			}
-		}
-		
-		for(var i=0;i<$scope.tarefas.length;i++){
-			if($scope.tarefas[i].feito){
-				totalCompletas++;
+				totalNaoMarcados++;
 				tarefas.push($scope.tarefas[i]);
 			}
 		}
 
-		$scope.completas = {total: totalCompletas};
-		$scope.incompletas = {total: totalIncompletas};
+		for(var i=0;i<$scope.tarefas.length;i++){
+			if($scope.tarefas[i].feito){
+				totalMarcados++;
+				tarefas.push($scope.tarefas[i]);
+			}
+		}
+
+		$scope.marcados = {total: totalMarcados};
+		$scope.naoMarcados = {total: totalNaoMarcados};
 		localStorage.setItem("tarefas", JSON.stringify(tarefas));
 		$scope.tarefas = JSON.parse(localStorage.getItem('tarefas'));
 	}
 
 	function initialize(){
 		$scope.nova = {nome: ''};
-		$scope.incompletas = {total: 0};
-		$scope.completas = {total: 0};
+		$scope.naoMarcados = {total: 0};
+		$scope.marcados = {total: 0};
 	}
 
 	function getLocalStorage(){
@@ -97,5 +108,14 @@ angular.module('starter.controllers',[])
 			$scope.tarefas = JSON.parse(localStorage.getItem('tarefas'));
 		}
 		totais();
+		return $scope.tarefas;
 	}
-})
+
+	function showMessage(message, position, stick){
+	  	ionicToast.show(message, position, stick, 3000);		
+	}
+	
+	$scope.hideToast = function(){
+	  ionicToast.hide();
+	};
+}])

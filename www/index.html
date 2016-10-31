@@ -25,6 +25,7 @@
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="lib/ionic-toast/dist/ionic-toast.bundle.min.js"></script>
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
@@ -39,6 +40,7 @@
         <h1 class="title">Minhas Tarefas</h1>
       </ion-header-bar>
       <ion-content>
+      <toaster-container></toaster-container>
       <ion-list>
         <form class="item-input-inset" ng-submit="adicionar()">
           <label class="item-input-wrapper">
@@ -50,15 +52,14 @@
         </form>
         <ion-checkbox ng-model="tarefa.feito" ng-click="totais()" ng-repeat="tarefa in tarefas"  ng-class="{riscado:tarefa.feito}"><i class="ion-pin"></i> {{tarefa.nome}}</ion-checkbox>
         <div class="row">
-          <div class="col">Completas: {{completas.total}}</div>
-          <div class="col">Incompletas: {{incompletas.total}}</div>
+          <div class="col">Marcados: {{marcados.total}}</div>
+          <div class="col">Não Marcados: {{naoMarcados.total}}</div>
         </div>
       </ion-list> 
       </ion-content>
-
       <ion-footer-bar class="bar-light" ng-if="tarefas.length > 0">
-        <button class="button button-small button-positive" ng-click="limparFeitas()"><i class="ion-checkmark-circled"></i> Excluir Feitas</button>
-        <button class="button button-small button-positive" ng-click="limparNaoFeitas()"><i class="ion-close-circled"></i> Excluir Não Feitas</button>
+        <button class="button button-small button-positive pull-left"  ng-if="marcados.total > 0"  ng-click="limparMarcados()"><i class="ion-checkmark-circled"></i> Excluir Marcados</button>
+        <button class="button button-small button-positive pull-right" ng-if="naoMarcados.total > 0" ng-click="limparNaoMarcados()"><i class="ion-close-circled"></i> Excluir Não Marcados</button>
       </ion-footer-bar>
 
     </ion-pane>
