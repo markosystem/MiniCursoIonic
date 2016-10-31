@@ -48,7 +48,7 @@
               <i class="ion-plus-round"></i> Adicionar
           </button>
         </form>
-        <ion-checkbox ng-model="tarefa.feito" ng-click="totais()" ng-repeat="tarefa in tarefas track by $index"  ng-class="{riscado:tarefa.feito}"><i class="ion-pin"></i> {{tarefa.nome}}</ion-checkbox>
+        <ion-checkbox ng-model="tarefa.feito" ng-click="totais()" ng-repeat="tarefa in tarefas"  ng-class="{riscado:tarefa.feito}"><i class="ion-pin"></i> {{tarefa.nome}}</ion-checkbox>
         <div class="row">
           <div class="col">Completas: {{completas.total}}</div>
           <div class="col">Incompletas: {{incompletas.total}}</div>
@@ -57,8 +57,8 @@
       </ion-content>
 
       <ion-footer-bar class="bar-light" ng-if="tarefas.length > 0">
-        <button class="button button-small button-positive" ng-click="limparFeitas()"><i class="ion-checkmark-circled"></i> Limpar Feitas</button>
-        <button class="button button-small button-positive" ng-click="limparNaoFeitas()"><i class="ion-close-circled"></i> Limpar Não Feitas</button>
+        <button class="button button-small button-positive" ng-click="limparFeitas()"><i class="ion-checkmark-circled"></i> Excluir Feitas</button>
+        <button class="button button-small button-positive" ng-click="limparNaoFeitas()"><i class="ion-close-circled"></i> Excluir Não Feitas</button>
       </ion-footer-bar>
 
     </ion-pane>
