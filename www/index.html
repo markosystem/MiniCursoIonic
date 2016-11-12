@@ -1,5 +1,80 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <title></title>
+
+  <link rel="manifest" href="manifest.json">
+
+    <!-- un-comment this code to enable service worker
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(() => console.log('service worker installed'))
+          .catch(err => console.log('Error', err));
+      }
+    </script>-->
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+  -->
+
+  <!-- ionic/angularjs js -->
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
+  <script src="lib/ionic-toast/dist/ionic-toast.bundle.min.js"></script>
+  <script src="lib/lockr/lockr.min.js" type="text/javascript"></script>
+
+  <!-- your app's js -->
+  <script src="js/app.js"></script>
+  <script src="js/controllers.js"></script>
+
+</head>
+<body ng-app="starter">
+
+  <ion-pane>
+    <ion-pane ng-controller="TarefaCtrl">
+      <ion-header-bar class="bar-positive">
+        <h1 class="title">Minhas Tarefas</h1>
+      </ion-header-bar>
+      <ion-content>
+        <toaster-container></toaster-container>
+
+        <ion-scroll direction="y" style="height: 540px">
+          <ion-list>
+            <form class="item-input-inset" ng-submit="adicionar()">
+              <label class="item-input-wrapper">
+                <input type="text" ng-model="nova.nome">
+              </label>
+              <button type="submit" class="button button-small button-positive" class="button button-small">
+                <i class="ion-plus-round"></i> Adicionar
+              </button>
+            </form>
+            <ion-checkbox ng-model="tarefa.feito" ng-click="totais()" ng-repeat="tarefa in tarefas"  ng-class="{riscado:tarefa.feito}"><i class="ion-pin"></i> {{tarefa.nome}}</ion-checkbox>
+          </ion-list> 
+        </ion-scroll>
+        <div class="row">
+          <div class="col">Marcados: {{marcados.total}}</div>
+          <div class="col">Não Marcados: {{naoMarcados.total}}</div>
+        </div>
+      </ion-content>
+      <ion-footer-bar class="bar-light" ng-if="tarefas.length > 0">
+        <div class="row">
+          <div class="col col-50">.col.col-75</div>
+          <div class="col col-50">.col</div>
+        </div>
+        <button class="button button-small button-positive pull-left"  ng-if="marcados.total > 0"  ng-click="limparMarcados()"><i class="ion-checkmark-circled"></i> Excluir Marcados</button>
+        <button class="button button-small button-positive pull-right" ng-if="naoMarcados.total > 0" ng-click="limparNaoMarcados()"><i class="ion-close-circled"></i> Excluir Não Marcados</button>
+      </ion-footer-bar>
+
+    </ion-pane>
+  </body>
+  </html>
+  <!DOCTYPE html>
+  <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
@@ -21,47 +96,48 @@
 
     <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
     <link href="css/ionic.app.css" rel="stylesheet">
-    -->
+  -->
 
-    <!-- ionic/angularjs js -->
-    <script src="lib/ionic/js/ionic.bundle.js"></script>
-    <script src="lib/ionic-toast/dist/ionic-toast.bundle.min.js"></script>
+  <!-- ionic/angularjs js -->
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
+  <script src="lib/ionic-toast/dist/ionic-toast.bundle.min.js"></script>
+  <script src="lib/lockr/lockr.min.js" type="text/javascript"></script>
 
-    <!-- your app's js -->
-    <script src="js/app.js"></script>
-    <script src="js/controllers.js"></script>
-    
-  </head>
-  <body ng-app="starter">
+  <!-- your app's js -->
+  <script src="js/app.js"></script>
+  <script src="js/controllers.js"></script>
 
-    <ion-pane>
+</head>
+<body ng-app="starter">
+
+  <ion-pane>
     <ion-pane ng-controller="TarefaCtrl">
       <ion-header-bar class="bar-positive">
         <h1 class="title">Minhas Tarefas</h1>
       </ion-header-bar>
       <ion-content>
-      <toaster-container></toaster-container>
-      <ion-list>
-        <form class="item-input-inset" ng-submit="adicionar()">
-          <label class="item-input-wrapper">
-            <input type="text" ng-model="nova.nome">
-          </label>
-          <button type="submit" class="button button-small button-positive" class="button button-small">
+        <toaster-container></toaster-container>
+
+        <ion-list>
+          <form class="item-input-inset" ng-submit="adicionar()">
+            <label class="item-input-wrapper">
+              <input type="text" ng-model="nova.nome">
+            </label>
+            <button type="submit" class="button button-small button-positive" class="button button-small">
               <i class="ion-plus-round"></i> Adicionar
-          </button>
-        </form>
-        <ion-checkbox ng-model="tarefa.feito" ng-click="totais()" ng-repeat="tarefa in tarefas"  ng-class="{riscado:tarefa.feito}"><i class="ion-pin"></i> {{tarefa.nome}}</ion-checkbox>
+            </button>
+          </form>
+          <ion-checkbox ng-model="tarefa.feito" ng-click="totais()" ng-repeat="tarefa in tarefas"  ng-class="{riscado:tarefa.feito}"><i class="ion-pin"></i> {{tarefa.nome}}</ion-checkbox>
+        </ion-list>
         <div class="row">
-          <div class="col">Marcados: {{marcados.total}}</div>
-          <div class="col">Não Marcados: {{naoMarcados.total}}</div>
+          <div class="col pull-left">Marcados: {{marcados.total}}</div>
+          <div class="col pull-right">Não Marcados: {{naoMarcados.total}}</div>
         </div>
-      </ion-list> 
       </ion-content>
-      <ion-footer-bar class="bar-light" ng-if="tarefas.length > 0">
+      <ion-footer-bar class="bar-light">
         <button class="button button-small button-positive pull-left"  ng-if="marcados.total > 0"  ng-click="limparMarcados()"><i class="ion-checkmark-circled"></i> Excluir Marcados</button>
         <button class="button button-small button-positive pull-right" ng-if="naoMarcados.total > 0" ng-click="limparNaoMarcados()"><i class="ion-close-circled"></i> Excluir Não Marcados</button>
       </ion-footer-bar>
-
     </ion-pane>
   </body>
-</html>
+  </html>
